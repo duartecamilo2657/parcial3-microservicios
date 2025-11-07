@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Run tests for create
+        run: |
+          cd services/create
+          go test ./... -v -cover
+
+      - name: Run tests for read
+        run: |
+          cd services/read
+          go test ./... -v -cover
+
+      - name: Run tests for update
+        run: |
+          cd services/update
+          go test ./... -v -cover
+
+      - name: Run tests for delete
+        run: |
+          cd services/delete
+          go test ./... -v -cover
