@@ -1,3 +1,3 @@
 module github.com/camilo/parcial3/services/update
 
-go 1.25.4
+go 1.25.3
