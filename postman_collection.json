@@ -1,61 +1,35 @@
 {
   "info": {
     "name": "Parcial3-Microservicios",
-    "_postman_id": "1e9d7d3a-2bce-4d4a-9cfa-7ef9b9e2b09f",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "parcial3-microservicios-collection"
   },
   "item": [
     {
-      "name": "Create - Health",
+      "name": "Create - insert item",
       "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:8081/health",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8081",
-          "path": ["health"]
-        }
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"name\": \"Laptop\", \"value\": 2000 }" },
+        "url": { "raw": "http://localhost:8081/items", "protocol": "http", "host": ["localhost"], "port": "8081", "path": ["items"] }
       }
     },
     {
-      "name": "Read - Health",
+      "name": "Read - list items",
+      "request": { "method": "GET", "url": { "raw": "http://localhost:8082/items", "protocol": "http", "host": ["localhost"], "port": "8082", "path": ["items"] } }
+    },
+    {
+      "name": "Update - update item",
       "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:8082/health",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8082",
-          "path": ["health"]
-        }
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"name\": \"Laptop Pro\", \"value\": 2500 }" },
+        "url": { "raw": "http://localhost:8083/items/:id", "protocol": "http", "host": ["localhost"], "port": "8083", "path": ["items", ":id"] }
       }
     },
     {
-      "name": "Update - Health",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:8083/health",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8083",
-          "path": ["health"]
-        }
-      }
-    },
-    {
-      "name": "Delete - Health",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:8084/health",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8084",
-          "path": ["health"]
-        }
-      }
+      "name": "Delete - delete item",
+      "request": { "method": "DELETE", "url": { "raw": "http://localhost:8084/items/:id", "protocol": "http", "host": ["localhost"], "port": "8084", "path": ["items", ":id"] } }
     }
   ]
 }
