@@ -11,6 +11,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       mongo:
         image: mongo:6
@@ -50,30 +51,32 @@ jobs:
           MONGO_URI: mongodb://admin:admin123@localhost:27017/
         run: go test ./... -v -cover
 
+
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker images
         run: docker compose build
 
-  trivy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Trivy and scan images
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: image
-          image-ref: "parcial3-microservicios-create"
-          format: table
-          severity: CRITICAL,HIGH
-          exit-code: 0
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.5.1
+
+      - name: Scan images with Trivy
+        run: |
+          trivy image --exit-code 0 --severity HIGH,CRITICAL parcial3-microservicios-create
+          trivy image --exit-code 0 --severity HIGH,CRITICAL parcial3-microservicios-read
+          trivy image --exit-code 0 --severity HIGH,CRITICAL parcial3-microservicios-update
+          trivy image --exit-code 0 --severity HIGH,CRITICAL parcial3-microservicios-delete
+
 
   dockerhub:
-    needs: trivy
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -95,6 +98,7 @@ jobs:
           docker push camilodur/read:latest
           docker push camilodur/update:latest
           docker push camilodur/delete:latest
+
 
   release:
     needs: dockerhub
