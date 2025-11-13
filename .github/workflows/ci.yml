@@ -64,8 +64,12 @@ jobs:
       - name: Build Docker images
         run: docker compose build
 
-      - name: Install Trivy
-        uses: aquasecurity/setup-trivy@v0.4.1
+      - name: Install Trivy (manual install)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Linux-64bit.deb
+          sudo dpkg -i trivy_Linux-64bit.deb
 
       - name: Scan images with Trivy
         run: |
@@ -73,6 +77,7 @@ jobs:
           trivy image --exit-code 0 --severity HIGH,CRITICAL parcial3-microservicios-read
           trivy image --exit-code 0 --severity HIGH,CRITICAL parcial3-microservicios-update
           trivy image --exit-code 0 --severity HIGH,CRITICAL parcial3-microservicios-delete
+
 
 
   dockerhub:
