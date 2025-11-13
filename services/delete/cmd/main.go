@@ -1,26 +1,26 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/camilo/parcial3/services/delete/internal/controller"
 )
 
 func main() {
-	port := os.Getenv("DELETE_PORT")
-	if port == "" {
-		port = "8084"
+	port := "8084"
+	if p := GetEnv("DELETE_PORT", "8084"); p != "" {
+		port = p
 	}
+	handler := controller.NewHandler()
+	log.Printf("Delete service listening on :%s", port)
+	log.Fatal(http.ListenAndServe(":"+port, handler))
+}
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Delete service OK"))
-	})
-
-	addr := fmt.Sprintf(":%s", port)
-	log.Printf("Delete service listening on %s", addr)
-	if err := http.ListenAndServe(addr, nil); err != nil {
-		log.Fatalf("Delete service failed: %v", err)
+func GetEnv(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
 	}
+	return def
 }
