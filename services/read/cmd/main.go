@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/camilo/parcial3/services/read/internal/controller"
 )
 
 func main() {
@@ -13,14 +14,9 @@ func main() {
 		port = "8082"
 	}
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Read service OK"))
-	})
-
-	addr := fmt.Sprintf(":%s", port)
-	log.Printf("Read service listening on %s", addr)
-	if err := http.ListenAndServe(addr, nil); err != nil {
-		log.Fatalf("Read service failed: %v", err)
+	handler := controller.NewHandler()
+	log.Printf("Read service listening on :%s", port)
+	if err := http.ListenAndServe(":"+port, handler); err != nil {
+		log.Fatalf("read service failed: %v", err)
 	}
 }
