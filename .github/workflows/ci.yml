@@ -65,7 +65,7 @@ jobs:
         run: docker compose build
 
       - name: Install Trivy
-        uses: aquasecurity/setup-trivy@v0.5.1
+        uses: aquasecurity/setup-trivy@v0.4.1
 
       - name: Scan images with Trivy
         run: |
