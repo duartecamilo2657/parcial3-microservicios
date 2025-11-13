@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"github.com/camilo/parcial3/services/create/internal/controller"
 )
 
 func main() {
@@ -12,15 +13,8 @@ func main() {
 	if port == "" {
 		port = "8081"
 	}
-
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Create service OK"))
-	})
-
+	handler := controller.NewHandler()
 	addr := fmt.Sprintf(":%s", port)
 	log.Printf("Create service listening on %s", addr)
-	if err := http.ListenAndServe(addr, nil); err != nil {
-		log.Fatalf("Create service failed: %v", err)
-	}
+	log.Fatal(http.ListenAndServe(addr, handler))
 }
