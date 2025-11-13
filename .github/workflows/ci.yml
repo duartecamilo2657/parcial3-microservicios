@@ -97,10 +97,10 @@ jobs:
 
       - name: Push Docker images
         run: |
-          docker tag parcial3-microservicios-create camilodur/create:latest
-          docker tag parcial3-microservicios-read camilodur/read:latest
-          docker tag parcial3-microservicios-update camilodur/update:latest
-          docker tag parcial3-microservicios-delete camilodur/delete:latest
+          docker tag parcial3-microservicios-create_service camilodur/create:latest
+          docker tag parcial3-microservicios-read_service camilodur/read:latest
+          docker tag parcial3-microservicios-update_service camilodur/update:latest
+          docker tag parcial3-microservicios-delete_service camilodur/delete:latest
 
           docker push camilodur/create:latest
           docker push camilodur/read:latest
