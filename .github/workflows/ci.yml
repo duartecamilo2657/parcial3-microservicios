@@ -9,6 +9,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: admin123
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'" 
+          --health-interval=5s 
+          --health-timeout=5s 
+          --health-retries=5
+
     strategy:
       matrix:
         service: [create, read, update, delete]
@@ -22,8 +36,19 @@ jobs:
         with:
           go-version: '1.25'
 
+      - name: Wait for MongoDB
+        run: |
+          echo "Waiting for MongoDB to be ready..."
+          for i in {1..15}; do
+            nc -z localhost 27017 && echo "MongoDB is up!" && break
+            echo "Waiting... ($i)"
+            sleep 3
+          done
+
       - name: Run tests for each microservice
         working-directory: ./services/${{ matrix.service }}
+        env:
+          MONGO_URI: mongodb://admin:admin123@localhost:27017/
         run: |
           echo "Running tests in ${{ matrix.service }}"
           go test ./... -v -cover
