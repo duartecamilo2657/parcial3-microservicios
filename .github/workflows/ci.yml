@@ -3,11 +3,10 @@ name: CI - Go Microservices
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  push:
     tags:
       - "v*.*.*"
+  pull_request:
+    branches: [ main ]
 
 jobs:
   test:
@@ -85,7 +84,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push images to DockerHub
+      - name: Push Docker images
         run: |
           docker tag parcial3-microservicios-create camilodur/create:latest
           docker tag parcial3-microservicios-read camilodur/read:latest
