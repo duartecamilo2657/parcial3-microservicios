@@ -34,5 +34,10 @@ func (r *ItemRepository) FindAll(ctx context.Context) ([]Item, error) {
 	if err := cursor.All(ctx, &items); err != nil {
 		return nil, err
 	}
+
+	if items == nil {
+		items = []Item{}
+	}
+
 	return items, nil
 }
