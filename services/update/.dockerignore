@@ -1,8 +1,12 @@
-# Go
-**/vendor
-*.log
-*.out
-*.exe
-
-# Git
+# .dockerignore
 .git
+.gitignore
+Dockerfile
+docker-compose.yml
+README.md
+*.md
+*.log
+tmp/
+vendor/
+bin/
+/backups
