@@ -1,5 +1,9 @@
 name: CI - Minimal GHCR Push
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   push:
     branches: [ main ]
@@ -26,17 +30,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push images to GHCR
+      - name: Tag and Push images to GHCR
         run: |
-          docker tag parcial3-microservicios-create ghcr.io/${{ github.repository_owner }}/create:latest
-          docker tag parcial3-microservicios-read ghcr.io/${{ github.repository_owner }}/read:latest
-          docker tag parcial3-microservicios-update ghcr.io/${{ github.repository_owner }}/update:latest
-          docker tag parcial3-microservicios-delete ghcr.io/${{ github.repository_owner }}/delete:latest
+          echo "📦 Tagging images..."
+          docker tag parcial3-microservicios-create ghcr.io/${{ github.repository_owner }}/parcial3-create:latest
+          docker tag parcial3-microservicios-read ghcr.io/${{ github.repository_owner }}/parcial3-read:latest
+          docker tag parcial3-microservicios-update ghcr.io/${{ github.repository_owner }}/parcial3-update:latest
+          docker tag parcial3-microservicios-delete ghcr.io/${{ github.repository_owner }}/parcial3-delete:latest
 
-          docker push ghcr.io/${{ github.repository_owner }}/create:latest
-          docker push ghcr.io/${{ github.repository_owner }}/read:latest
-          docker push ghcr.io/${{ github.repository_owner }}/update:latest
-          docker push ghcr.io/${{ github.repository_owner }}/delete:latest
+          echo "🚀 Pushing images..."
+          docker push ghcr.io/${{ github.repository_owner }}/parcial3-create:latest
+          docker push ghcr.io/${{ github.repository_owner }}/parcial3-read:latest
+          docker push ghcr.io/${{ github.repository_owner }}/parcial3-update:latest
+          docker push ghcr.io/${{ github.repository_owner }}/parcial3-delete:latest
 
   release:
     needs: build
@@ -45,6 +51,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: softprops/action-gh-release@v2
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
