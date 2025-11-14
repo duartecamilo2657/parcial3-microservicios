@@ -1,4 +1,4 @@
-name: CI - Minimal GHCR Push
+name: CI - GHCR + DockerHub Push
 
 permissions:
   contents: write
@@ -11,6 +11,10 @@ on:
       - "v*.*.*"
 
 jobs:
+
+  # ---------------------------
+  #   BUILD + GHCR PUSH
+  # ---------------------------
   build:
     runs-on: ubuntu-latest
 
@@ -44,78 +48,74 @@ jobs:
           docker push ghcr.io/${{ github.repository_owner }}/parcial3-update:latest
           docker push ghcr.io/${{ github.repository_owner }}/parcial3-delete:latest
 
-  release:
+
+  # ---------------------------
+  #   DOCKER HUB PUSH
+  # ---------------------------
+  dockerhub:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      # CREATE
+      - name: Build and push create service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/create
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-create:latest
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-create:${{ github.sha }}
+
+      # READ
+      - name: Build and push read service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/read
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-read:latest
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-read:${{ github.sha }}
+
+      # UPDATE
+      - name: Build and push update service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/update
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-update:latest
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-update:${{ github.sha }}
+
+      # DELETE
+      - name: Build and push delete service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/delete
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-delete:latest
+            ${{ secrets.DOCKER_USERNAME }}/parcial3-delete:${{ github.sha }}
+
+
+  # ---------------------------
+  #   RELEASE AUTOMÁTICO
+  # ---------------------------
+  release:
+    needs: dockerhub
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-# ---------------------------
-#   DOCKER HUB PUSH
-# ---------------------------
-dockerhub:
-  needs: build
-  runs-on: ubuntu-latest
-
-  steps:
-    - uses: actions/checkout@v4
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-
-    # ----------------------------------------
-    # CREATE SERVICE
-    # ----------------------------------------
-    - name: Build and push create service
-      uses: docker/build-push-action@v5
-      with:
-        context: ./services/create
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-create:latest
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-create:${{ github.sha }}
-
-    # ----------------------------------------
-    # READ SERVICE
-    # ----------------------------------------
-    - name: Build and push read service
-      uses: docker/build-push-action@v5
-      with:
-        context: ./services/read
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-read:latest
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-read:${{ github.sha }}
-
-    # ----------------------------------------
-    # UPDATE SERVICE
-    # ----------------------------------------
-    - name: Build and push update service
-      uses: docker/build-push-action@v5
-      with:
-        context: ./services/update
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-update:latest
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-update:${{ github.sha }}
-
-    # ----------------------------------------
-    # DELETE SERVICE
-    # ----------------------------------------
-    - name: Build and push delete service
-      uses: docker/build-push-action@v5
-      with:
-        context: ./services/delete
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-delete:latest
-          ${{ secrets.DOCKER_USERNAME }}/parcial3-delete:${{ github.sha }}
