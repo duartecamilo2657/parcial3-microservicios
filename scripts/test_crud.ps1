@@ -1,0 +1,65 @@
+Write-Host "========== INICIANDO PRUEBAS CRUD ==========" -ForegroundColor Cyan
+
+# BASE URLs
+$createUrl = "http://localhost:8081/items"
+$readUrl   = "http://localhost:8082/items"
+$updateUrl = "http://localhost:8083/items"
+$deleteUrl = "http://localhost:8084/items"
+
+# -------------------------------
+# 1. CREATE
+# -------------------------------
+Write-Host "`n[CREATE] Creando item..." -ForegroundColor Yellow
+
+$body = '{"name":"Laptop Jenkins","value":2000}'
+$response = Invoke-RestMethod -Method POST -Uri $createUrl -ContentType "application/json" -Body $body
+
+$id = $response._id
+
+if (-not $id) {
+    throw "❌ ERROR: No se obtuvo un ID al crear el item."
+}
+
+Write-Host "✔ Item creado correctamente. ID = $id" -ForegroundColor Green
+
+# -------------------------------
+# 2. READ
+# -------------------------------
+Write-Host "`n[READ] Leyendo lista de items..." -ForegroundColor Yellow
+
+$items = Invoke-RestMethod -Method GET -Uri $readUrl
+Write-Host "✔ Items actuales:" -ForegroundColor Green
+$items | ConvertTo-Json
+
+# -------------------------------
+# 3. UPDATE
+# -------------------------------
+Write-Host "`n[UPDATE] Actualizando item..." -ForegroundColor Yellow
+
+$updateBody = '{"name":"Laptop Jenkins Pro","value":2500}'
+Invoke-RestMethod -Method PUT -Uri "$updateUrl/$id" -ContentType "application/json" -Body $updateBody
+
+Write-Host "✔ Item actualizado correctamente." -ForegroundColor Green
+
+# -------------------------------
+# 4. DELETE
+# -------------------------------
+Write-Host "`n[DELETE] Eliminando item..." -ForegroundColor Yellow
+
+Invoke-RestMethod -Method DELETE -Uri "$deleteUrl/$id"
+
+Write-Host "✔ Item eliminado correctamente." -ForegroundColor Green
+
+# -------------------------------
+# 5. VERIFY DELETE
+# -------------------------------
+Write-Host "`n[VERIFY] Verificando eliminación..." -ForegroundColor Yellow
+
+$itemsAfter = Invoke-RestMethod -Method GET -Uri $readUrl
+
+if ($itemsAfter._id -contains $id) {
+    throw "❌ ERROR: El item con ID $id todavía existe."
+}
+
+Write-Host "✔ Verificación exitosa: el item ya NO existe." -ForegroundColor Green
+Write-Host "`n========== TODAS LAS PRUEBAS CRUD PASARON ==========" -ForegroundColor Cyan
