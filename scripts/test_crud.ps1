@@ -17,10 +17,10 @@ $response = Invoke-RestMethod -Method POST -Uri $createUrl -ContentType "applica
 $id = $response._id
 
 if (-not $id) {
-    throw "❌ ERROR: No se obtuvo un ID al crear el item."
+    throw "ERROR: No se obtuvo un ID al crear el item."
 }
 
-Write-Host "✔ Item creado correctamente. ID = $id" -ForegroundColor Green
+Write-Host "Item creado correctamente. ID = $id" -ForegroundColor Green
 
 # -------------------------------
 # 2. READ
@@ -28,7 +28,7 @@ Write-Host "✔ Item creado correctamente. ID = $id" -ForegroundColor Green
 Write-Host "`n[READ] Leyendo lista de items..." -ForegroundColor Yellow
 
 $items = Invoke-RestMethod -Method GET -Uri $readUrl
-Write-Host "✔ Items actuales:" -ForegroundColor Green
+Write-Host "Items actuales:" -ForegroundColor Green
 $items | ConvertTo-Json
 
 # -------------------------------
@@ -39,7 +39,7 @@ Write-Host "`n[UPDATE] Actualizando item..." -ForegroundColor Yellow
 $updateBody = '{"name":"Laptop Jenkins Pro","value":2500}'
 Invoke-RestMethod -Method PUT -Uri "$updateUrl/$id" -ContentType "application/json" -Body $updateBody
 
-Write-Host "✔ Item actualizado correctamente." -ForegroundColor Green
+Write-Host "Item actualizado correctamente." -ForegroundColor Green
 
 # -------------------------------
 # 4. DELETE
@@ -48,18 +48,22 @@ Write-Host "`n[DELETE] Eliminando item..." -ForegroundColor Yellow
 
 Invoke-RestMethod -Method DELETE -Uri "$deleteUrl/$id"
 
-Write-Host "✔ Item eliminado correctamente." -ForegroundColor Green
+Write-Host "Item eliminado correctamente." -ForegroundColor Green
 
 # -------------------------------
 # 5. VERIFY DELETE
 # -------------------------------
-Write-Host "`n[VERIFY] Verificando eliminación..." -ForegroundColor Yellow
+Write-Host "`n[VERIFY] Verificando eliminacion..." -ForegroundColor Yellow
 
 $itemsAfter = Invoke-RestMethod -Method GET -Uri $readUrl
 
-if ($itemsAfter._id -contains $id) {
-    throw "❌ ERROR: El item con ID $id todavía existe."
+# Validar que el ID YA NO exista
+$exists = $itemsAfter | Where-Object { $_._id -eq $id }
+
+if ($exists) {
+    throw "ERROR: El item con ID $id todavia existe."
 }
 
-Write-Host "✔ Verificación exitosa: el item ya NO existe." -ForegroundColor Green
-Write-Host "`n========== TODAS LAS PRUEBAS CRUD PASARON ==========" -ForegroundColor Cyan
+Write-Host "Verificacion exitosa: el item ya no existe." -ForegroundColor Green
+
+Write-Host "========== TODAS LAS PRUEBAS CRUD PASARON ==========" -ForegroundColor Cyan
