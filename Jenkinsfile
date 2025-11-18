@@ -5,7 +5,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/tuusuario/parcial3-microservicios.git'
+                git 'https://github.com/duartecamilo2657/parcial3-microservicios'
             }
         }
 
