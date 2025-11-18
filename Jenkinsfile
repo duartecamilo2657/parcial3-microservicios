@@ -5,33 +5,32 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/duartecamilo2657/parcial3-microservicios'
+                git branch: 'main',
+                    url: 'https://github.com/duartecamilo2657/parcial3-microservicios'
             }
         }
 
         stage('Build Docker Images') {
             steps {
                 echo "Construyendo imágenes..."
-                sh 'docker compose build'
+                powershell 'docker compose build'
             }
         }
 
         stage('Start Services') {
             steps {
                 echo "Levantando servicios..."
-                sh 'docker compose down -v || true'
-                sh 'docker compose up -d'
-                sh 'sleep 8'
-                sh 'docker ps'
+                powershell 'docker compose down -v --remove-orphans'
+                powershell 'docker compose up -d'
+                powershell 'Start-Sleep -Seconds 10'
+                powershell 'docker ps'
             }
         }
 
         stage('Run CRUD Tests') {
             steps {
                 echo "Ejecutando pruebas CRUD automáticas..."
-                powershell '''
-                    ./scripts/test_crud.ps1
-                '''
+                powershell './scripts/test_crud.ps1'
             }
         }
 
@@ -40,7 +39,7 @@ pipeline {
     post {
         always {
             echo "Apagando contenedores..."
-            sh 'docker compose down -v || true'
+            powershell 'docker compose down -v'
         }
     }
 }
