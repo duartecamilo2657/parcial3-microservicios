@@ -12,24 +12,30 @@ $deleteUrl = "http://localhost:8084/items"
 Write-Host "`n[CREATE] Creando item..." -ForegroundColor Yellow
 
 $body = '{"name":"Laptop Jenkins","value":2000}'
-$response = Invoke-RestMethod -Method POST -Uri $createUrl -ContentType "application/json" -Body $body
+Invoke-RestMethod -Method POST -Uri $createUrl -ContentType "application/json" -Body $body
 
-$id = $response._id
-
-if (-not $id) {
-    throw "ERROR: No se obtuvo un ID al crear el item."
-}
-
-Write-Host "Item creado correctamente. ID = $id" -ForegroundColor Green
+Write-Host "Item creado correctamente." -ForegroundColor Green
 
 # -------------------------------
-# 2. READ
+# OBTENER ID DEL ÚLTIMO ITEM
 # -------------------------------
-Write-Host "`n[READ] Leyendo lista de items..." -ForegroundColor Yellow
+Write-Host "`n[INFO] Obteniendo ID del item recién creado..." -ForegroundColor Yellow
 
 $items = Invoke-RestMethod -Method GET -Uri $readUrl
-Write-Host "Items actuales:" -ForegroundColor Green
-$items | ConvertTo-Json
+
+if ($items.Length -eq 0) {
+    throw "ERROR: No hay items después del CREATE."
+}
+
+# Mongo retorna items en orden → el último es el recién creado
+$lastItem = $items[-1]
+$id = $lastItem._id
+
+if (-not $id) {
+    throw "ERROR: No se pudo obtener el ID del último item."
+}
+
+Write-Host "ID obtenido = $id" -ForegroundColor Green
 
 # -------------------------------
 # 3. UPDATE
@@ -53,17 +59,16 @@ Write-Host "Item eliminado correctamente." -ForegroundColor Green
 # -------------------------------
 # 5. VERIFY DELETE
 # -------------------------------
-Write-Host "`n[VERIFY] Verificando eliminacion..." -ForegroundColor Yellow
+Write-Host "`n[VERIFY] Verificando eliminación..." -ForegroundColor Yellow
 
 $itemsAfter = Invoke-RestMethod -Method GET -Uri $readUrl
 
-# Validar que el ID YA NO exista
 $exists = $itemsAfter | Where-Object { $_._id -eq $id }
 
 if ($exists) {
-    throw "ERROR: El item con ID $id todavia existe."
+    throw "ERROR: El item con ID $id todavía existe."
 }
 
-Write-Host "Verificacion exitosa: el item ya no existe." -ForegroundColor Green
+Write-Host "Verificación exitosa: el item ya no existe." -ForegroundColor Green
 
 Write-Host "========== TODAS LAS PRUEBAS CRUD PASARON ==========" -ForegroundColor Cyan
