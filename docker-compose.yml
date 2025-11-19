@@ -219,6 +219,73 @@ services:
     ports:
       - "${DELETE_PORT_MASCOTAS}:${DELETE_PORT_MASCOTAS}"
     
-   
+  # ============================
+  #      PHONES SERVICES
+  # ============================
+
+  create_phones:
+    build: ./services/phones/create
+    container_name: create_phones_service
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      CREATE_PORT: ${CREATE_PORT_PHONES}
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - "${CREATE_PORT_PHONES}:${CREATE_PORT_PHONES}"
+  
+  delete_phones:
+    build: ./services/phones/delete
+    container_name: delete_phones_service
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      DELETE_PORT: ${DELETE_PORT_PHONES}
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - "${DELETE_PORT_PHONES}:${DELETE_PORT_PHONES}"
+
+  read_phones:
+    build: ./services/phones/read
+    container_name: read_phones_service
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      READ_PORT: ${READ_PORT_PHONES}
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - "${READ_PORT_PHONES}:${READ_PORT_PHONES}"
+
+  update_phones:
+    build: ./services/phones/update
+    container_name: update_phones_service
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      UPDATE_PORT: ${UPDATE_PORT_PHONES}
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - "${UPDATE_PORT_PHONES}:${UPDATE_PORT_PHONES}"
+
 volumes:
   mongo_data:
