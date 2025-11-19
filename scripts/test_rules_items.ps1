@@ -3,7 +3,19 @@ Write-Host "========== PRUEBAS DE REGLAS DE NEGOCIO (ITEMS) =========="
 $baseUrl = "http://localhost:8051/items"
 
 function Test-Request($body) {
-    return Invoke-WebRequest -Uri $baseUrl -Method POST -Body ($body | ConvertTo-Json) -ContentType "application/json" -SkipHttpErrorCheck
+
+    try {
+        # Intento normal
+        return Invoke-WebRequest `
+            -Uri $baseUrl `
+            -Method POST `
+            -Body ($body | ConvertTo-Json) `
+            -ContentType "application/json"
+    }
+    catch {
+        # Captura respuestas con errores (como 400)
+        return $_.Exception.Response
+    }
 }
 
 # TEST 1: name vacío
