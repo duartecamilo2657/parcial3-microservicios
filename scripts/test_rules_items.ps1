@@ -4,19 +4,21 @@ $baseUrl = "http://localhost:8051/items"
 
 function Test-Request($body) {
 
+    $json = ConvertTo-Json $body -Depth 10
+
     try {
-        # Intento normal
         return Invoke-WebRequest `
             -Uri $baseUrl `
             -Method POST `
-            -Body ($body | ConvertTo-Json) `
-            -ContentType "application/json"
+            -Body $json `
+            -ContentType "application/json" `
+            -UseBasicParsing
     }
     catch {
-        # Captura respuestas con errores (como 400)
         return $_.Exception.Response
     }
 }
+
 
 # TEST 1: name vacío
 Write-Host "`n[TEST 1] Validar que 'name' no puede ser vacio..."
