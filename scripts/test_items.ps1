@@ -1,4 +1,4 @@
-Write-Host "========== INICIANDO PRUEBAS CRUD ==========" -ForegroundColor Cyan
+Write-Host "========== INICIANDO PRUEBAS CRUD ( ITEMS) ==========" -ForegroundColor Cyan
 
 # BASE URLs
 $createUrl = "http://localhost:8081/items"

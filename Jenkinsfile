@@ -34,6 +34,9 @@ pipeline {
 
                 echo "Ejecutando pruebas CRUD automáticas (Items)..."
                 powershell './scripts/test_items.ps1'
+
+                echo "Ejecutando pruebas CRUD automáticas (Mascotas)..."
+                powershell './scripts/test_mascotas.ps1'
             }
         }
 
