@@ -61,15 +61,35 @@ func NewHandler() http.Handler {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
+
 		var item Item
 		if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
 			return
 		}
+
+		// === Validaciones de reglas de negocio ===
+		if item.Name == "" {
+			http.Error(w, "name cannot be empty", http.StatusBadRequest)
+			return
+		}
+
+		if item.Value == 0 {
+			http.Error(w, "value cannot be empty or zero", http.StatusBadRequest)
+			return
+		}
+
+		if item.Value <= 0 {
+			http.Error(w, "value must be greater than 0", http.StatusBadRequest)
+			return
+		}
+
+		// Crear en base de datos
 		if err := svc.Create(r.Context(), item); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(item)
 	})
