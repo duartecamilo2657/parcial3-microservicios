@@ -29,7 +29,10 @@ pipeline {
 
         stage('Run CRUD Tests') {
             steps {
-                echo "Ejecutando pruebas CRUD automáticas..."
+                echo "Ejecutando pruebas CRUD automáticas (Students)..."
+                powershell './scripts/test_students.ps1'
+
+                echo "Ejecutando pruebas CRUD automáticas (Items)..."
                 powershell './scripts/test_items.ps1'
             }
         }
