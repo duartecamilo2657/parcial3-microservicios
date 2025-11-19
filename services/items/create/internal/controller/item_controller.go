@@ -68,23 +68,25 @@ func NewHandler() http.Handler {
 			return
 		}
 
-		// === Validaciones de reglas de negocio ===
+		// === VALIDACIÓN DE REGLAS DE NEGOCIO ===
 		if item.Name == "" {
 			http.Error(w, "name cannot be empty", http.StatusBadRequest)
 			return
 		}
 
+		// Value vacío o cero
 		if item.Value == 0 {
 			http.Error(w, "value cannot be empty or zero", http.StatusBadRequest)
 			return
 		}
 
-		if item.Value <= 0 {
+		// Value negativo
+		if item.Value < 0 {
 			http.Error(w, "value must be greater than 0", http.StatusBadRequest)
 			return
 		}
 
-		// Crear en base de datos
+		// Crear
 		if err := svc.Create(r.Context(), item); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
