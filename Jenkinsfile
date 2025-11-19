@@ -30,7 +30,7 @@ pipeline {
         stage('Run CRUD Tests') {
             steps {
                 echo "Ejecutando pruebas CRUD automáticas..."
-                powershell './scripts/test_crud.ps1'
+                powershell './scripts/test_items.ps1'
             }
         }
 
