@@ -1,10 +1,10 @@
 Write-Host "========== INICIANDO PRUEBAS CRUD (PHONES) ==========" -ForegroundColor Cyan
 
 # BASE URLs de cada microservicio
-$createUrl = "http://localhost:8051/phones"
-$readUrl   = "http://localhost:8052/phones"
-$updateUrl = "http://localhost:8053/phones"
-$deleteUrl = "http://localhost:8054/phones"
+$createUrl = "http://localhost:8061/phones"
+$readUrl   = "http://localhost:8062/phones"
+$updateUrl = "http://localhost:8063/phones"
+$deleteUrl = "http://localhost:8064/phones"
 
 # -------------------------------
 # 1. CREATE
