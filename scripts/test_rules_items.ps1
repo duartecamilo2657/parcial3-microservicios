@@ -1,6 +1,6 @@
 Write-Host "========== PRUEBAS DE REGLAS DE NEGOCIO (ITEMS) =========="
 
-$baseUrl = "http://localhost:8051/items"
+$baseUrl = "http://localhost:8081/items"
 
 function Test-Request($body) {
 
