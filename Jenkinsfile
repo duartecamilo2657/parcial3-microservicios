@@ -42,6 +42,12 @@ pipeline {
                 powershell './scripts/test_phones.ps1'
             }
         }
+        stage('Run Business Rules Tests (Phones)') {
+            steps {
+                echo "Validando reglas de negocio (Phones)..."
+                powershell './scripts/test_phones_rules.ps1'
+            }
+        }
 
     }
 
