@@ -20,6 +20,7 @@ pipeline {
         stage('Start Services') {
             steps {
                 echo "Levantando servicios..."
+                powershell 'docker compose down -v --remove-orphans'
                 powershell 'docker compose up -d'
                 powershell 'Start-Sleep -Seconds 10'
                 powershell 'docker ps'
@@ -40,7 +41,8 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline finalizado. Los contenedores quedan corriendo."
+            echo "Apagando contenedores..."
+            powershell 'docker compose down -v'
         }
     }
 }
