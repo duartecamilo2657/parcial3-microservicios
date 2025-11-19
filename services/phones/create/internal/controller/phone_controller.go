@@ -16,7 +16,7 @@ import (
 )
 
 type Phone struct {
-	Brand  string `json:"brand"`
+	Brand string `json:"brand"`
 	Price int    `json:"price"`
 }
 
@@ -61,15 +61,38 @@ func NewHandler() http.Handler {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
+
 		var phone Phone
 		if err := json.NewDecoder(r.Body).Decode(&phone); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(w, "Invalid JSON body", http.StatusBadRequest)
 			return
 		}
+
+		// ===============================
+		// VALIDACIONES DE REGLAS DE NEGOCIO
+		// ===============================
+
+		// Regla 1: brand NO puede ser vacío
+		if phone.Brand == "" {
+			http.Error(w, "brand cannot be empty", http.StatusBadRequest)
+			return
+		}
+
+		// Regla 2: price debe ser mayor que 0
+		if phone.Price <= 0 {
+			http.Error(w, "price must be greater than 0", http.StatusBadRequest)
+			return
+		}
+
+		// ===============================
+		// SI TODO ESTÁ BIEN → GUARDAR
+		// ===============================
+
 		if err := svc.Create(r.Context(), phone); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(phone)
 	})
