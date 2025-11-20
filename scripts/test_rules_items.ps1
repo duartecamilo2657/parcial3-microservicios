@@ -52,7 +52,7 @@ if ($response.StatusCode -eq 400) {
 
 # TEST 4: caso valido
 Write-Host "`n[TEST 4] Validar creacion correcta..."
-$response = Test-Request @{ name = "Valid Item"; value = 99 }
+$response = Test-Request @{ name = "Valid Item"; value = "9tyrtrtrtr9" }
 
 if ($response.StatusCode -eq 201) {
     Write-Host "[OK] El servicio creo un item valido."

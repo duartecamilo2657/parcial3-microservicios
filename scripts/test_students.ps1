@@ -11,7 +11,7 @@ $deleteUrl = "http://localhost:8094/students"
 # -------------------------------
 Write-Host "`n[CREATE] Creando estudiante..." -ForegroundColor Yellow
 
-$body = '{"name":"Juan Pérez","age":20}'
+$body = '{"age":20}'
 Invoke-RestMethod -Method POST -Uri $createUrl -ContentType "application/json" -Body $body
 
 Write-Host "Estudiante creado correctamente." -ForegroundColor Green
