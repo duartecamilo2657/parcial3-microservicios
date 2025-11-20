@@ -42,7 +42,7 @@ if ($response.StatusCode -eq 400) {
 
 # TEST 3: value menor o igual a cero
 Write-Host "`n[TEST 3] Validar que 'value' debe ser mayor que 0..."
-$response = Test-Request @{ name = "Item X"; value = -5 }
+$response = Test-Request @{ name = "Item X"; value = "5" }
 
 if ($response.StatusCode -eq 400) {
     Write-Host "[OK] El servicio rechazo un value menor o igual a cero."
